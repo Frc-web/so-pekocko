@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");  /* pour importer body-parser et tran
 const mongoose = require('mongoose');  /* Mongoose est un package qui facilite les interactions avec notre base de données MongoDB grâce à des fonctions extrêmement utiles. */
 const path = require('path');
 
-const stuffRoutes = require('./routes/stuff');  /* on importe le router */
+const sauceRoutes = require('./routes/sauce');  /* on importe le router */
 const userRoutes = require('./routes/user');
 
 mongoose.connect('mongodb+srv://Frc-web:Todayfred30@cluster0.lcfyu.mongodb.net/be-fullstack?retryWrites=true&w=majority',
@@ -33,7 +33,7 @@ app.use(bodyParser.json());  /* transforme le corps de la requête en objet java
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-app.use('/api/stuff', stuffRoutes);  /* pour cette route, on utilise le routeur stuffRoutes */
+app.use('/api/sauce', sauceRoutes);  /* pour cette route, on utilise le routeur stuffRoutes */
 app.use('/api/auth', userRoutes);
 
 module.exports = app;  /* pour exporter l'application notre application Express pour pouvoir y accèder depuis les autres fichiers de notre projet */
