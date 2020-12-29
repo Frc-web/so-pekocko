@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require("express");  
 const bodyParser = require("body-parser");  
 const mongoose = require('mongoose');  
@@ -6,7 +8,7 @@ const path = require('path');
 const sauceRoutes = require('./routes/sauce');  
 const userRoutes = require('./routes/user');
 
-mongoose.connect('mongodb+srv://Frc-web:Todayfred30@cluster0.lcfyu.mongodb.net/so-pekocko?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://'+process.env.DB_USER+':'+process.env.DB_PASS+'@'+process.env.DB_HOST+'/'+process.env.DB_NAME+'?retryWrites=true&w=majority',
 {
     useNewUrlParser: true,  
     useUnifiedTopology: true
