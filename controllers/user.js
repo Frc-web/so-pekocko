@@ -2,20 +2,25 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/User');
+const schemaPasswordValidator = require('../models/PasswordValidator.js')
 
 exports.signup = (req, res, next) => {
+  if(schemaPasswordValidator.validate(req.body.password)) {
     bcrypt.hash(req.body.password, 10)  
-      .then(hash => {  
-        const user = new User({
-          email: req.body.email,
-          password: hash
-        });
-        user.save() 
-          .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
-          .catch(error => res.status(400).json({ error }));
-      })
-      .catch(error => res.status(500).json({ error }));
-  };
+    .then(hash => {  
+      const user = new User({
+        email: req.body.email,
+        password: hash
+      });
+      user.save() 
+        .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
+        .catch(error => res.status(400).json({ error }));
+    })
+    .catch(error => res.status(500).json({ error }));
+  } else {
+    return res.status(400).json({ error: "Le mot de passe doit contenir des majuscules, des minuscules, des chiffres, et des symboles"});
+  }
+};
 
   exports.login = (req, res, next) => {
     User.findOne({ email: req.body.email })  
@@ -32,7 +37,7 @@ exports.signup = (req, res, next) => {
               userId: user._id,  
               token: jwt.sign(
                 { userId: user._id }, 
-                process.env.DB_TOKEN,  
+                process.env.TOKEN,  /* ----------------------------------------------------------------- */
                 { expiresIn: '24h' } 
               )
             });
