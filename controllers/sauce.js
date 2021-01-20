@@ -49,7 +49,7 @@ exports.modifySauce = (req, res, next) => {
             Sauce.findOne({ _id: req.params.id })
                 .then(sauce => {
                     const filename = sauce.imageUrl.split('/images/')[1];
-                    fs.unlink(`images/${filename}`, () => {});  /* on supprime l'image, si il y en une */
+                    fs.unlink(`images/${filename}`, () => {});  /* on supprime l'image, si il y en a */
                 }).catch(error => res.status(400).json({ error }))
         } 
         Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id }) /* on supprime ensuite l'objet  */
