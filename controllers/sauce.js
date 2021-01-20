@@ -41,13 +41,20 @@ exports.likeOrDislike = (req, res, next) => {
 
 exports.modifySauce = (req, res, next) => {
     const sauceObject = req.file ?  /* opérateur ternaire pour savoir si req.file existe (nouvelle image)*/
-      {
-        ...JSON.parse(req.body.sauce),
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`   /* si il existe */
-      } : { ...req.body };  /* si il n'existe pas */
-    Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
-        .then(() => res.status(200).json({ message: 'Objet modifié !' }))
-        .catch(error => res.status(400).json({ error }));
+        {
+            ...JSON.parse(req.body.sauce),
+            imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`   /* si il existe */
+        } : { ...req.body };  /* si il n'existe pas */
+        if (req.file) {
+            Sauce.findOne({ _id: req.params.id })
+                .then(sauce => {
+                    const filename = sauce.imageUrl.split('/images/')[1];
+                    fs.unlink(`images/${filename}`, () => {});  /* on supprime l'image, si il y en une */
+                }).catch(error => res.status(400).json({ error }))
+        } 
+        Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id }) /* on supprime ensuite l'objet  */
+            .then(() => res.status(200).json({ message: 'Objet modifié' }))
+            .catch(error => res.status(400).json({ error }));     
 };
 
 exports.deleteSauce = (req, res, next) => {
